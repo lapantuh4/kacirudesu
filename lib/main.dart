@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kaciru_desu/pages/home_page.dart';
 
 void main() {
   runApp(const MainApp());
@@ -9,6 +10,6 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: Scaffold(body: Text('Ganteng')));
+    return const MaterialApp(home: HomePage());
   }
 }
