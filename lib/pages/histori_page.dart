@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class HomePage extends StatelessWidget {
+class HistoriPage extends StatelessWidget {
   const new({super.key});
 
   @override
@@ -9,7 +9,10 @@ class HomePage extends StatelessWidget {
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.secondary,
-        title: Text("H O M E", style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(
+          "H I S T O R I",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
       ),
       drawer: Drawer(
@@ -21,7 +24,7 @@ class HomePage extends StatelessWidget {
               children: [
                 DrawerHeader(
                   child: Icon(
-                    Icons.home,
+                    Icons.access_time,
                     color: Theme.of(context).colorScheme.inversePrimary,
                     size: 50,
                   ),
@@ -42,6 +45,7 @@ class HomePage extends StatelessWidget {
                     ),
                     onTap: () {
                       Navigator.pop(context);
+                      Navigator.pushReplacementNamed(context, '/home');
                     },
                   ),
                 ),
@@ -101,7 +105,6 @@ class HomePage extends StatelessWidget {
                     ),
                     onTap: () {
                       Navigator.pop(context);
-                      Navigator.pushReplacementNamed(context, '/histori');
                     },
                   ),
                 ),
@@ -149,7 +152,6 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
-      body: Center(child: Text("Welcome! User...")),
     );
   }
 }
