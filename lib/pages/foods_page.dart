@@ -149,6 +149,14 @@ class FoodsPage extends StatelessWidget {
           ],
         ),
       ),
+      body: Column(
+        children: [
+          const TextField(
+            decoration: InputDecoration(hintText: "Cari makanan..."),
+          ),
+          // Expanded(child: ListView.builder(itemBuilder: ))
+        ],
+      ),
     );
   }
 }
