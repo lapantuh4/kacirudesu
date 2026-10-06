@@ -154,6 +154,9 @@ class FoodsPage extends StatelessWidget {
           const TextField(
             decoration: InputDecoration(hintText: "Cari makanan..."),
           ),
+          const TextField(
+            decoration: InputDecoration(hintText: "masuk pak eko"),
+          )
           // Expanded(child: ListView.builder(itemBuilder: ))
         ],
       ),
