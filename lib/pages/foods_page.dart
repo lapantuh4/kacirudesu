@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../models/food.dart';
+
 class FoodsPage extends StatelessWidget {
   const new({super.key});
 
@@ -149,13 +151,17 @@ class FoodsPage extends StatelessWidget {
           ],
         ),
       ),
-      body: Column(
-        children: [
-          const TextField(
-            decoration: InputDecoration(hintText: "Cari makanan..."),
-          ),
-          // Expanded(child: ListView.builder(itemBuilder: ))
-        ],
+      body: ListView.builder(
+        itemCount: foods.length,
+        itemBuilder: (context, index) {
+          final food = foods[index];
+
+          return ListTile(
+            title: Text(food.namaMakanan),
+            subtitle: Text('Stok: ${food.stockMakanan}'),
+            trailing: Text('Rp ${food.hargaMakanan}'),
+          );
+        },
       ),
     );
   }

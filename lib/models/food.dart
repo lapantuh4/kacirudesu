@@ -10,3 +10,7 @@ class Food {
   });
 }
 
+final List<Food> foods = [
+  Food(namaMakanan: "Mie Ayam", hargaMakanan: 15000, stockMakanan: 50),
+  Food(namaMakanan: "Es Teh", hargaMakanan: 5000, stockMakanan: 75),
+];
