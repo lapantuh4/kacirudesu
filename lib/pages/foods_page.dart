@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:kaciru_desu/widgets/food_card.dart';
 
-class FoodsPage extends StatelessWidget {
+import '../models/food.dart';
+
+class FoodsPage extends StatefulWidget {
   const new({super.key});
 
+  @override
+  State<FoodsPage> createState() => _FoodsPageState();
+}
+
+class _FoodsPageState extends State<FoodsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -149,6 +157,7 @@ class FoodsPage extends StatelessWidget {
           ],
         ),
       ),
+<<<<<<< HEAD
       body: Column(
         children: [
           const TextField(
@@ -159,6 +168,97 @@ class FoodsPage extends StatelessWidget {
           )
           // Expanded(child: ListView.builder(itemBuilder: ))
         ],
+=======
+      body: StatefulBuilder(
+        builder: (context, setState) {
+          String selectedCategory = 'Semua';
+          String searchQuery = '';
+
+          final filteredFoods = foods.where((food) {
+            final matchCategory =
+                selectedCategory == 'Semua' ||
+                food.kategoriMakanan == selectedCategory;
+
+            final matchSearch = food.namaMakanan.toLowerCase().contains(
+              searchQuery.toLowerCase(),
+            );
+
+            return matchCategory && matchSearch;
+          }).toList();
+
+          return Column(
+            children: [
+              // SEARCH BAR
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: 'Cari makanan atau minuman...',
+                    prefixIcon: const Icon(Icons.search),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      searchQuery = value;
+                    });
+                  },
+                ),
+              ),
+
+              // KATEGORI
+              SizedBox(
+                height: 50,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  children: ['Semua', 'Makanan', 'Minuman'].map((category) {
+                    final isSelected = selectedCategory == category;
+
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: ChoiceChip(
+                        label: Text(category),
+                        selected: isSelected,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        onSelected: (_) {
+                          setState(() {
+                            selectedCategory = category;
+                          });
+                        },
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+
+              const SizedBox(height: 8),
+
+              // CARD MAKANAN / MINUMAN
+              Expanded(
+                child: GridView.builder(
+                  padding: const EdgeInsets.all(16),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                    childAspectRatio: 1.3,
+                  ),
+                  itemCount: filteredFoods.length,
+                  itemBuilder: (context, index) {
+                    final food = filteredFoods[index];
+
+                    return FoodCard(food: food);
+                  },
+                ),
+              ),
+            ],
+          );
+        },
+>>>>>>> 3d2f8248eecc1fe160cfce7680dc3b867fcc71e9
       ),
     );
   }
