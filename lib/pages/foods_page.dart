@@ -157,18 +157,7 @@ class _FoodsPageState extends State<FoodsPage> {
           ],
         ),
       ),
-<<<<<<< HEAD
-      body: Column(
-        children: [
-          const TextField(
-            decoration: InputDecoration(hintText: "Cari makanan..."),
-          ),
-          const TextField(
-            decoration: InputDecoration(hintText: "masuk pak eko"),
-          )
-          // Expanded(child: ListView.builder(itemBuilder: ))
-        ],
-=======
+
       body: StatefulBuilder(
         builder: (context, setState) {
           String selectedCategory = 'Semua';
@@ -258,7 +247,7 @@ class _FoodsPageState extends State<FoodsPage> {
             ],
           );
         },
->>>>>>> 3d2f8248eecc1fe160cfce7680dc3b867fcc71e9
+
       ),
     );
   }
