@@ -1,8 +1,8 @@
 class Food {
-  final String namaMakanan;
-  final String kategoriMakanan;
-  final int hargaMakanan;
-  final int stockMakanan;
+   String namaMakanan;
+   String kategoriMakanan;
+   int hargaMakanan;
+   int stockMakanan;
 
   Food({
     required this.namaMakanan,
@@ -13,6 +13,22 @@ class Food {
 }
 
 final List<Food> foods = [
-  Food(namaMakanan: "Mie Ayam",kategoriMakanan: "Makanan", hargaMakanan: 15000, stockMakanan: 50),
-  Food(namaMakanan: "Es Teh",kategoriMakanan: "Minuman", hargaMakanan: 5000, stockMakanan: 75),
+  Food(
+    namaMakanan: "Mie Ayam",
+    kategoriMakanan: "Makanan",
+    hargaMakanan: 15000,
+    stockMakanan: 50,
+  ),
+  Food(
+    namaMakanan: "Es Teh",
+    kategoriMakanan: "Minuman",
+    hargaMakanan: 5000,
+    stockMakanan: 75,
+  ),
+  Food(
+    namaMakanan: "Es Teh",
+    kategoriMakanan: "Minuman",
+    hargaMakanan: 5000,
+    stockMakanan: 75,
+  ),
 ];

@@ -11,6 +11,104 @@ class FoodsPage extends StatefulWidget {
 }
 
 class _FoodsPageState extends State<FoodsPage> {
+  String makananDicari = '';
+
+  void editMakanan(Food food) {
+    final namaController = TextEditingController(text: food.namaMakanan);
+    final hargaController = TextEditingController(text: '${food.hargaMakanan}');
+    final stokController = TextEditingController(text: '${food.stockMakanan}');
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        // Judul
+        title: const Text(
+          'Edit Produk',
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        ),
+
+        // Warna dan bentuk popup
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+
+        // Jarak isi dialog dari pinggir
+        contentPadding: const EdgeInsets.fromLTRB(24, 12, 24, 20),
+
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: namaController,
+              decoration: const InputDecoration(
+                labelText: 'Nama Produk',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: hargaController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: 'Harga',
+                prefixText: 'Rp ',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: stokController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: 'Stok',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+
+        // Area tombol
+        actionsPadding: const EdgeInsets.fromLTRB(24, 0, 24, 20),
+        actions: [
+          // Tombol Batal
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Batal', style: TextStyle(color: Colors.red)),
+          ),
+
+          // Tombol Simpan
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            ),
+            onPressed: () {
+              setState(() {
+                food.namaMakanan = namaController.text;
+                food.hargaMakanan =
+                    int.tryParse(hargaController.text) ?? food.hargaMakanan;
+                food.stockMakanan =
+                    int.tryParse(stokController.text) ?? food.stockMakanan;
+              });
+              Navigator.pop(context);
+            },
+            child: const Text('Simpan'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void hapusMakanan(Food food) {
+    setState(() {
+      foods.remove(food);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -157,21 +255,15 @@ class _FoodsPageState extends State<FoodsPage> {
           ],
         ),
       ),
+
       body: StatefulBuilder(
         builder: (context, setState) {
-          String selectedCategory = 'Semua';
-          String searchQuery = '';
-
-          final filteredFoods = foods.where((food) {
-            final matchCategory =
-                selectedCategory == 'Semua' ||
-                food.kategoriMakanan == selectedCategory;
-
+          final makananDifilter = foods.where((food) {
             final matchSearch = food.namaMakanan.toLowerCase().contains(
-              searchQuery.toLowerCase(),
+              makananDicari.toLowerCase(),
             );
 
-            return matchCategory && matchSearch;
+            return matchSearch;
           }).toList();
 
           return Column(
@@ -189,41 +281,11 @@ class _FoodsPageState extends State<FoodsPage> {
                   ),
                   onChanged: (value) {
                     setState(() {
-                      searchQuery = value;
+                      makananDicari = value;
                     });
                   },
                 ),
               ),
-
-              // KATEGORI
-              SizedBox(
-                height: 50,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  children: ['Semua', 'Makanan', 'Minuman'].map((category) {
-                    final isSelected = selectedCategory == category;
-
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: ChoiceChip(
-                        label: Text(category),
-                        selected: isSelected,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        onSelected: (_) {
-                          setState(() {
-                            selectedCategory = category;
-                          });
-                        },
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ),
-
-              const SizedBox(height: 8),
 
               // CARD MAKANAN / MINUMAN
               Expanded(
@@ -231,15 +293,19 @@ class _FoodsPageState extends State<FoodsPage> {
                   padding: const EdgeInsets.all(16),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    crossAxisSpacing: 12,
+                    crossAxisSpacing: 8,
                     mainAxisSpacing: 12,
                     childAspectRatio: 1.3,
                   ),
-                  itemCount: filteredFoods.length,
+                  itemCount: makananDifilter.length,
                   itemBuilder: (context, index) {
-                    final food = filteredFoods[index];
+                    final food = makananDifilter[index];
 
-                    return FoodCard(food: food);
+                    return FoodCard(
+                      food: food,
+                      hapusMakanan: () => hapusMakanan(food),
+                      editMakanan: () => editMakanan(food),
+                    );
                   },
                 ),
               ),
