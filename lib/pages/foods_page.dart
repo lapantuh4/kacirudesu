@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:kaciru_desu/widgets/add_food_dialog.dart';
 import 'package:kaciru_desu/widgets/food_card.dart';
+
+import '../widgets/edit_food_dialog.dart';
 
 import '../models/food.dart';
 
@@ -13,92 +16,43 @@ class FoodsPage extends StatefulWidget {
 class _FoodsPageState extends State<FoodsPage> {
   String makananDicari = '';
 
-  void editMakanan(Food food) {
-    final namaController = TextEditingController(text: food.namaMakanan);
-    final hargaController = TextEditingController(text: '${food.hargaMakanan}');
-    final stokController = TextEditingController(text: '${food.stockMakanan}');
+  //validasi apakah produk sudah ada ketika ditambahkan atau
+  bool namaSudahAda(String nama, {Food? kecuali}) {
+    return foods.any((produk) {
+      final namaSama =
+          produk.namaMakanan.trim().toLowerCase() == nama.trim().toLowerCase();
 
+      return namaSama && produk != kecuali;
+    });
+  }
+
+  void tambahMakanan() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        // Judul
-        title: const Text(
-          'Edit Produk',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-        ),
+      builder: (context) => AddFoodDialog(
+        onSimpan: (nama, harga, stok) {
+          setState(() {
+            foods.add(
+              Food(namaMakanan: nama, hargaMakanan: harga, stockMakanan: stok),
+            );
+          });
+        },
+      ),
+    );
+  }
 
-        // Warna dan bentuk popup
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        surfaceTintColor: Colors.transparent,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-
-        // Jarak isi dialog dari pinggir
-        contentPadding: const EdgeInsets.fromLTRB(24, 12, 24, 20),
-
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: namaController,
-              decoration: const InputDecoration(
-                labelText: 'Nama Produk',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: hargaController,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Harga',
-                prefixText: 'Rp ',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: stokController,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Stok',
-                border: OutlineInputBorder(),
-              ),
-            ),
-          ],
-        ),
-
-        // Area tombol
-        actionsPadding: const EdgeInsets.fromLTRB(24, 0, 24, 20),
-        actions: [
-          // Tombol Batal
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Batal', style: TextStyle(color: Colors.red)),
-          ),
-
-          // Tombol Simpan
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
-              foregroundColor: Theme.of(context).colorScheme.onPrimary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            ),
-            onPressed: () {
-              setState(() {
-                food.namaMakanan = namaController.text;
-                food.hargaMakanan =
-                    int.tryParse(hargaController.text) ?? food.hargaMakanan;
-                food.stockMakanan =
-                    int.tryParse(stokController.text) ?? food.stockMakanan;
-              });
-              Navigator.pop(context);
-            },
-            child: const Text('Simpan'),
-          ),
-        ],
+  void editMakanan(Food food) {
+    showDialog(
+      context: context,
+      builder: (context) => EditFoodDialog(
+        food: food,
+        onSimpan: (nama, harga, stok) {
+          setState(() {
+            food.namaMakanan = nama;
+            food.hargaMakanan = harga;
+            food.stockMakanan = stok;
+          });
+        },
       ),
     );
   }
@@ -313,6 +267,17 @@ class _FoodsPageState extends State<FoodsPage> {
           );
         },
       ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(right: 16, bottom: 16),
+        child: FloatingActionButton(
+          backgroundColor: Colors.blue,
+          foregroundColor: Theme.of(context).textTheme.displayLarge?.color,
+          onPressed: tambahMakanan,
+          child: const Icon(Icons.add),
+        ),
+      ),
+
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }
