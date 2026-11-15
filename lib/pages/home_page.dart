@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -8,7 +9,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // Data sementara request pembeli
+  // DATA SEMENTARA REQUEST PEMBELI
   final List<Map<String, dynamic>> requests = [
     {
       'nama': 'Andi',
@@ -37,7 +38,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   String formatRupiah(int nominal) {
-    return 'Rp${nominal.toString().replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (match) => '.')}';
+    return 'Rp${nominal.toString().replaceAllMapped(
+      RegExp(r'\B(?=(\d{3})+(?!\d))'),
+      (match) => '.',
+    )}';
   }
 
   @override
@@ -47,6 +51,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: warna.surface,
 
+      // APP BAR
       appBar: AppBar(
         backgroundColor: warna.secondary,
         title: const Text(
@@ -56,71 +61,194 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
       ),
 
-      // Tetap gunakan drawer milikmu di sini.
+      // DRAWER
+      drawer: Drawer(
+        backgroundColor: warna.surface,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              children: [
+                DrawerHeader(
+                  child: Icon(
+                    Icons.food_bank_rounded,
+                    color: warna.inversePrimary,
+                    size: 50,
+                  ),
+                ),
+
+                const SizedBox(height: 25),
+
+                _drawerItem(context, Icons.home, 'H O M E', '/home', warna),
+                const SizedBox(height: 25),
+
+                _drawerItem(context, Icons.food_bank_rounded, 'F O O D S', '/foods', warna),
+                const SizedBox(height: 25),
+
+                _drawerItem(context, Icons.shopping_cart, 'K A S I R', '/kasir', warna),
+                const SizedBox(height: 25),
+
+                _drawerItem(context, Icons.access_time, 'H I S T O R I', '/histori', warna),
+                const SizedBox(height: 25),
+
+                _drawerItem(context, Icons.account_circle_sharp, 'P R O F I L', '/profile', warna),
+              ],
+            ),
+
+            Padding(
+              padding: const EdgeInsets.only(left: 25, bottom: 75),
+              child: ListTile(
+                leading: Icon(
+                  Icons.logout,
+                  color: warna.inversePrimary,
+                ),
+                title: Text(
+                  'L O G O U T',
+                  style: TextStyle(color: warna.inversePrimary),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushReplacementNamed(context, '/login');
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+
+      // BODY
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          // SAPAAN
-          Text(
-            'Welcome, User!',
-            style: TextStyle(
-              color: warna.inversePrimary,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
+          // MENU TERLARIS HARI INI
+          _card(
+            warna,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Menu Terlaris Hari Ini',
+                  style: _judulStyle(warna),
+                ),
+
+                const SizedBox(height: 16),
+
+                _menuTerlaris(
+                  warna,
+                  Icons.restaurant,
+                  'Makanan',
+                  'Nasgor',
+                ),
+
+                const SizedBox(height: 16),
+
+                _menuTerlaris(
+                  warna,
+                  Icons.local_cafe,
+                  'Minuman',
+                  'Es Teh',
+                ),
+              ],
             ),
-          ),
-
-          const SizedBox(height: 6),
-
-          Text(
-            'Berikut ringkasan keuangan tokomu.',
-            style: TextStyle(
-              color: warna.inversePrimary.withValues(alpha: 0.7),
-            ),
-          ),
-
-          const SizedBox(height: 20),
-
-          // RINGKASAN KEUANGAN
-          _KeuanganCard(
-            judul: 'Pemasukan',
-            nominal: formatRupiah(500000),
-            ikon: Icons.trending_up,
-            warna: Colors.green,
           ),
 
           const SizedBox(height: 12),
 
-          _KeuanganCard(
-            judul: 'Pengeluaran',
-            nominal: formatRupiah(150000),
-            ikon: Icons.trending_down,
-            warna: Colors.red,
+          // TOTAL PENDAPATAN
+          _card(
+            warna,
+            child: Row(
+              children: [
+                Icon(
+                  Icons.account_balance_wallet,
+                  color: warna.inversePrimary,
+                  size: 32,
+                ),
+                const SizedBox(width: 16),
+
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Total Pendapatan Hari Ini',
+                        style: _judulStyle(warna).copyWith(fontSize: 16),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        formatRupiah(67676767),
+                        style: TextStyle(
+                          color: warna.inversePrimary,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
 
           const SizedBox(height: 12),
 
-          _KeuanganCard(
-            judul: 'Laba Bersih',
-            nominal: formatRupiah(350000),
-            ikon: Icons.account_balance_wallet,
-            warna: warna.inversePrimary,
+          // PELANGGAN DILAYANI
+          _card(
+            warna,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Pelanggan Dilayani',
+                  style: _judulStyle(warna),
+                ),
+
+                const SizedBox(height: 16),
+
+                Row(
+                  children: [
+                    Expanded(
+                      child: _statistikPelanggan(
+                        warna,
+                        Icons.check_circle,
+                        Colors.green,
+                        '67',
+                        'Diterima',
+                      ),
+                    ),
+
+                    Container(
+                      height: 65,
+                      width: 1,
+                      color: warna.inversePrimary.withValues(alpha: 0.3),
+                    ),
+
+                    Expanded(
+                      child: _statistikPelanggan(
+                        warna,
+                        Icons.cancel,
+                        Colors.red,
+                        '21',
+                        'Ditolak',
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
 
           const SizedBox(height: 28),
 
-          // JUDUL REQUEST
+          // JUDUL REQUEST PEMBELI
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 'Request Pembeli',
-                style: TextStyle(
-                  color: warna.inversePrimary,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: _judulStyle(warna).copyWith(fontSize: 20),
               ),
+
               Text(
                 '${requests.where((r) => r['status'] == 'Menunggu').length} menunggu',
                 style: TextStyle(
@@ -156,7 +284,7 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // NAMA PEMBELI DAN STATUS
+                      // NAMA DAN STATUS
                       Row(
                         children: [
                           Icon(
@@ -164,6 +292,7 @@ class _HomePageState extends State<HomePage> {
                             size: 36,
                             color: warna.inversePrimary,
                           ),
+
                           const SizedBox(width: 10),
 
                           Expanded(
@@ -183,8 +312,8 @@ class _HomePageState extends State<HomePage> {
                               color: status == 'Menunggu'
                                   ? Colors.orange
                                   : status == 'Diterima'
-                                  ? Colors.green
-                                  : Colors.red,
+                                      ? Colors.green
+                                      : Colors.red,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -210,7 +339,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
 
-                      // TOMBOL AKSI
+                      // TOMBOL TERIMA DAN TOLAK
                       if (status == 'Menunggu') ...[
                         const SizedBox(height: 12),
 
@@ -255,64 +384,126 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-}
 
-// WIDGET CARD RINGKASAN KEUANGAN
-class _KeuanganCard extends StatelessWidget {
-  final String judul;
-  final String nominal;
-  final IconData ikon;
-  final Color warna;
+  // DRAWER ITEM
+  Widget _drawerItem(
+    BuildContext context,
+    IconData icon,
+    String title,
+    String route,
+    ColorScheme warna,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 25),
+      child: ListTile(
+        leading: Icon(icon, color: warna.inversePrimary),
+        title: Text(
+          title,
+          style: TextStyle(color: warna.inversePrimary),
+        ),
+        onTap: () {
+          Navigator.pop(context);
 
-  const _KeuanganCard({
-    required this.judul,
-    required this.nominal,
-    required this.ikon,
-    required this.warna,
-  });
+          if (route != '/home') {
+            Navigator.pushReplacementNamed(context, route);
+          }
+        },
+      ),
+    );
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    final warnaTema = Theme.of(context).colorScheme;
-
+  // CARD UMUM
+  Widget _card(ColorScheme warna, {required Widget child}) {
     return Card(
-      color: warnaTema.secondary,
+      color: warna.secondary,
       elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(18),
-        child: Row(
-          children: [
-            Icon(ikon, color: warna, size: 32),
-            const SizedBox(width: 16),
-
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    judul,
-                    style: TextStyle(
-                      color: warnaTema.inversePrimary,
-                      fontSize: 14,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-
-                  Text(
-                    nominal,
-                    style: TextStyle(
-                      color: warnaTema.inversePrimary,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+        child: child,
       ),
+    );
+  }
+
+  // STYLE JUDUL
+  TextStyle _judulStyle(ColorScheme warna) {
+    return TextStyle(
+      color: warna.inversePrimary,
+      fontSize: 18,
+      fontWeight: FontWeight.bold,
+    );
+  }
+
+  // MENU TERLARIS
+  Widget _menuTerlaris(
+    ColorScheme warna,
+    IconData ikon,
+    String kategori,
+    String nama,
+  ) {
+    return Row(
+      children: [
+        Icon(
+          ikon,
+          color: warna.inversePrimary,
+          size: 28,
+        ),
+        const SizedBox(width: 12),
+
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                kategori,
+                style: TextStyle(
+                  color: warna.inversePrimary.withValues(alpha: 0.7),
+                ),
+              ),
+              Text(
+                nama,
+                style: TextStyle(
+                  color: warna.inversePrimary,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  // STATISTIK PELANGGAN
+  Widget _statistikPelanggan(
+    ColorScheme warna,
+    IconData ikon,
+    Color warnaIkon,
+    String jumlah,
+    String label,
+  ) {
+    return Column(
+      children: [
+        Icon(ikon, color: warnaIkon, size: 30),
+        const SizedBox(height: 8),
+
+        Text(
+          jumlah,
+          style: TextStyle(
+            color: warna.inversePrimary,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+
+        Text(
+          label,
+          style: TextStyle(color: warna.inversePrimary),
+        ),
+      ],
     );
   }
 }
