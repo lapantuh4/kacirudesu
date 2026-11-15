@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kaciru_desu/widgets/add_food_dialog.dart';
-import 'package:kaciru_desu/widgets/food_card.dart';
+import 'package:kaciru_desu/widgets/food_card_foods.dart';
 
 import '../widgets/edit_food_dialog.dart';
 
@@ -255,7 +255,7 @@ class _FoodsPageState extends State<FoodsPage> {
                   itemBuilder: (context, index) {
                     final food = makananDifilter[index];
 
-                    return FoodCard(
+                    return FoodCardFoods(
                       food: food,
                       hapusMakanan: () => hapusMakanan(food),
                       editMakanan: () => editMakanan(food),

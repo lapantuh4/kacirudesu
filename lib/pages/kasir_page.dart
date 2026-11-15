@@ -1,7 +1,94 @@
 import 'package:flutter/material.dart';
+import 'package:kaciru_desu/models/food.dart';
+import 'package:kaciru_desu/widgets/food_card_kasir.dart';
 
-class KasirPage extends StatelessWidget {
+import 'package:kaciru_desu/widgets/cart_dialog.dart';
+
+class KasirPage extends StatefulWidget {
   const new({super.key});
+
+  @override
+  State<KasirPage> createState() => _KasirPageState();
+}
+
+class _KasirPageState extends State<KasirPage> {
+  final Map<Food, int> keranjang = {};
+
+  void tampilkanKeranjang() {
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return CartDialog(
+              keranjang: keranjang,
+              totalHarga: totalHarga,
+              onUbahJumlah: (food, perubahan, refresh) {
+                ubahJumlah(food, perubahan);
+                setDialogState(() {});
+              },
+              onHapus: (food, refresh) {
+                hapusDariKeranjang(food);
+                setDialogState(() {});
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void ubahJumlah(Food food, int perubahan) {
+    final jumlahSekarang = keranjang[food] ?? 0;
+    final jumlahBaru = jumlahSekarang + perubahan;
+
+    if (jumlahBaru <= 0) {
+      setState(() {
+        keranjang.remove(food);
+      });
+      return;
+    }
+
+    if (jumlahBaru > food.stockMakanan) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Jumlah melebihi stok!')));
+      return;
+    }
+
+    setState(() {
+      keranjang[food] = jumlahBaru;
+    });
+  }
+
+  void hapusDariKeranjang(Food food) {
+    setState(() {
+      keranjang.remove(food);
+    });
+  }
+
+  void tambahKeKeranjang(Food food) {
+    final jumlahSekarang = keranjang[food] ?? 0;
+
+    if (jumlahSekarang >= food.stockMakanan) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(content: Text('Jumlah melebihi stok yang tersedia!')),
+        );
+      return;
+    }
+
+    setState(() {
+      keranjang[food] = jumlahSekarang + 1;
+    });
+  }
+
+  int get totalHarga {
+    return keranjang.entries.fold(
+      0,
+      (total, item) => total + (item.key.hargaMakanan * item.value),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -149,6 +236,36 @@ class KasirPage extends StatelessWidget {
           ],
         ),
       ),
+
+      body: GridView.builder(
+        padding: const EdgeInsets.all(16),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 12,
+          childAspectRatio: 1.0,
+        ),
+        itemCount: foods.length,
+        itemBuilder: (context, index) {
+          final food = foods[index];
+
+          return FoodCardKasir(
+            food: food,
+            onTambah: () => tambahKeKeranjang(food),
+          );
+        },
+      ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(right: 16, bottom: 16),
+        child: FloatingActionButton(
+          backgroundColor: Colors.blue,
+          foregroundColor: Theme.of(context).textTheme.displayLarge?.color,
+          onPressed: tampilkanKeranjang,
+          child: const Icon(Icons.shopping_cart),
+        ),
+      ),
+
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }

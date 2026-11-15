@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../models/food.dart';
 
-class FoodCard extends StatelessWidget {
+class FoodCardFoods extends StatelessWidget {
   final void Function()? hapusMakanan;
   final void Function()? editMakanan;
   final Food food;
 
-  const FoodCard({
+  const new({
     super.key,
     required this.food,
     required this.hapusMakanan,
